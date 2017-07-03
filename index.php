@@ -40,7 +40,7 @@ foreach ($config['repositories'] as $repository) {
         <h1>Pull requests</h1>
         <div class="list-group">
             <?php foreach ($pullRequests as $pr): ?>
-            <a href="<?php echo $pr['html_url'] ?>" class="list-group-item">
+            <a href="<?php echo $pr['html_url'] ?>" class="list-group-item" target="_blank">
                 <h4 class="list-group-item-heading">
                     <img class="img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" width="32" />
                     <?php echo $pr['title'] ?>
