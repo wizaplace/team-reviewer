@@ -6,6 +6,12 @@
  */
 declare(strict_types = 1);
 
+if (!empty($_GET['id']) && !empty($_GET['redir'])) {
+    setcookie('lastClick['.$_GET['id'].']', (string) time(), time() + 2678400);
+    header('Location: '.$_GET['redir'], true, 302);
+    exit();
+}
+
 $config = include 'config.php';
 
 $context = stream_context_create([
@@ -39,8 +45,10 @@ foreach ($config['repositories'] as $repository) {
     <body>
         <h1>Pull requests</h1>
         <div class="list-group">
-            <?php foreach ($pullRequests as $pr): ?>
-            <a href="<?php echo $pr['html_url'] ?>" class="list-group-item" target="_blank">
+            <?php foreach ($pullRequests as $pr):
+                $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
+            ?>
+            <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item" target="_blank" <?php if ($updated): ?>style="border-left: 3px solid #0366d6"<?php endif; ?>>
                 <h4 class="list-group-item-heading">
                     <img class="img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" width="32" />
                     <?php echo $pr['title'] ?>
