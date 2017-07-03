@@ -29,6 +29,17 @@ foreach ($config['repositories'] as $repository) {
 
     $pullRequests = array_merge($pullRequests, $response);
 }
+
+usort($pullRequests, function($a, $b) {
+    $ta = strtotime($a['created_at']);
+    $tb = strtotime($b['created_at']);
+
+    if ($ta == $tb) {
+        return 0;
+    }
+
+    return $ta < $tb ? -1 : 1;
+});
 ?>
 <!DOCTYPE html>
 <html lang="en">
