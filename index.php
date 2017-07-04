@@ -33,7 +33,7 @@ foreach ($config['repositories'] as $repository) {
     $response = file_get_contents('https://api.github.com/repos/'.$repository.'/pulls?state=open&per_page=100', false, $context);
     $response = json_decode($response, true);
 
-    $pullRequests = array_merge($pullRequests, $response);
+    $pullRequests[$repository] = $response;
 }
 ?>
 <!DOCTYPE html>
@@ -59,21 +59,30 @@ foreach ($config['repositories'] as $repository) {
     </head>
     <body>
         <h1>Pull requests</h1>
-        <div class="list-group">
-            <?php foreach ($pullRequests as $pr):
-                $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
-            ?>
-            <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
-                <div class="media">
-                    <div class="media-left">
-                        <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
-                    </div>
-                    <div class="media-body">
-                        <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
-                        <p class="text-muted">#<?php echo $pr['number'] ?> on <?php echo $pr['head']['repo']['full_name']; ?> at <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></p>
+        <div class="row">
+            <?php foreach ($pullRequests as $repository => $prs): ?>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><?php echo $repository; ?></div>
+                    <div class="list-group">
+                        <?php foreach ($prs as $pr):
+                            $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
+                        ?>
+                        <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
+                            <div class="media">
+                                <div class="media-left">
+                                    <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
+                                    <p class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-folder-close"></span> <?php echo $pr['head']['repo']['full_name']; ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></p>
+                                </div>
+                            </div>
+                        </a>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-            </a>
+            </div>
             <?php endforeach; ?>
         </div>
     </body>
