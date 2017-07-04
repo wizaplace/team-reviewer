@@ -58,7 +58,6 @@ foreach ($config['repositories'] as $repository) {
         </style>
     </head>
     <body>
-        <h1>Pull requests</h1>
         <div class="row">
             <?php foreach ($pullRequests as $repository => $prs): ?>
             <div class="col-md-4">
