@@ -4,7 +4,10 @@ return [
     'repositories' => [
     ],
     'auth' => [
-        'username' => '',
-        'password' => '',
-    ]
+        'basic' => [
+            'username' => '',
+            'password' => '',
+        ],
+        # 'token' => '', // GitHub personal token
+    ],
 ];

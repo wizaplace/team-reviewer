@@ -14,9 +14,15 @@ if (!empty($_GET['id']) && !empty($_GET['redir'])) {
 
 $config = include 'config.php';
 
+if (isset($config['auth']['token'])) {
+    $authorization = 'token ' . $config['auth']['token'];
+} elseif (isset($auth['basic'])) {
+    $authorization = 'Basic ' . base64_encode($config['auth']['basic']['username'].':'.$config['auth']['basic']['password']);
+}
+
 $context = stream_context_create([
     'http' => [
-        'header'  => 'Authorization: Basic ' . base64_encode($config['auth']['username'].':'.$config['auth']['password']) . "\r\n" .
+        'header'  => 'Authorization: ' .$authorization. "\r\n" .
                      'User-Agent: Wizaplace team reviewer'
     ]
 ]);
