@@ -41,6 +41,15 @@ foreach ($config['repositories'] as $repository) {
         <title>Pulls Requests</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            body {
+                margin: 10px;
+            }
+
+            .updated {
+                border-left: 3px solid #0366d6;
+            }
+        </style>
     </head>
     <body>
         <h1>Pull requests</h1>
@@ -48,7 +57,7 @@ foreach ($config['repositories'] as $repository) {
             <?php foreach ($pullRequests as $pr):
                 $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
             ?>
-            <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item" target="_blank" <?php if ($updated): ?>style="border-left: 3px solid #0366d6"<?php endif; ?>>
+            <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
                 <h4 class="list-group-item-heading">
                     <img class="img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" width="32" />
                     <?php echo $pr['title'] ?>
