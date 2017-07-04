@@ -74,7 +74,7 @@ foreach ($config['repositories'] as $repository) {
                                 </div>
                                 <div class="media-body">
                                     <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
-                                    <p class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-folder-close"></span> <?php echo $pr['head']['repo']['full_name']; ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></p>
+                                    <p class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></p>
                                 </div>
                             </div>
                         </a>
