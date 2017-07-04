@@ -64,17 +64,15 @@ foreach ($config['repositories'] as $repository) {
                 $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
             ?>
             <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
-                <h4 class="list-group-item-heading">
-                    <img class="img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" width="32" />
-                    <?php echo $pr['title'] ?>
-                    <span class="pull-right">
-                        <strong>
-                            <?php echo $pr['head']['repo']['full_name']; ?>
-                        </strong>
-                        &nbsp;-&nbsp;
-                        <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?>
-                    </span>
-                </h4>
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
+                        <p class="text-muted">#<?php echo $pr['number'] ?> on <?php echo $pr['head']['repo']['full_name']; ?> at <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></p>
+                    </div>
+                </div>
             </a>
             <?php endforeach; ?>
         </div>
