@@ -6,34 +6,27 @@
  */
 declare(strict_types = 1);
 
+function status_icon($state) {
+    switch ($state) {
+        case 'failure':
+            return 'remove-sign text-danger';
+        case 'pending':
+            return 'question-sign text-warning';
+        case 'success':
+            return 'ok-sign text-success';
+    }
+}
+
 if (!empty($_GET['id']) && !empty($_GET['redir'])) {
     setcookie('lastClick['.$_GET['id'].']', (string) time(), time() + 2678400);
     header('Location: '.$_GET['redir'], true, 302);
     exit();
 }
 
-$config = include 'config.php';
+$repos = [];
 
-if (isset($config['auth']['token'])) {
-    $authorization = 'token ' . $config['auth']['token'];
-} elseif (isset($auth['basic'])) {
-    $authorization = 'Basic ' . base64_encode($config['auth']['basic']['username'].':'.$config['auth']['basic']['password']);
-}
-
-$context = stream_context_create([
-    'http' => [
-        'header'  => 'Authorization: ' .$authorization. "\r\n" .
-                     'User-Agent: Wizaplace team reviewer'
-    ]
-]);
-
-$pullRequests = [];
-
-foreach ($config['repositories'] as $repository) {
-    $response = file_get_contents('https://api.github.com/repos/'.$repository.'/pulls?state=open&per_page=100', false, $context);
-    $response = json_decode($response, true);
-
-    $pullRequests[$repository] = $response;
+if (is_file('repos.dat')) {
+    $repos = unserialize(file_get_contents('repos.dat'));
 }
 ?>
 <!DOCTYPE html>
@@ -62,12 +55,15 @@ foreach ($config['repositories'] as $repository) {
     <body>
         <div class="container-fluid">
             <div class="row">
-                <?php foreach ($pullRequests as $repository => $prs): ?>
+                <?php foreach ($repos as $repository => $pullRequests): ?>
                 <div class="col-md-4">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><?php echo $repository; ?></div>
+                        <div class="panel-heading">
+                            <?php echo $repository; ?>
+                            <span class="badge pull-right"><?php echo (string) count($pullRequests); ?></span>
+                        </div>
                         <div class="list-group">
-                            <?php foreach ($prs as $pr):
+                            <?php foreach ($pullRequests as $pr):
                                 $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
                             ?>
                             <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
@@ -76,7 +72,14 @@ foreach ($config['repositories'] as $repository) {
                                         <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
                                     </div>
                                     <div class="media-body">
-                                        <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
+                                        <h4 class="media-heading">
+                                            <?php echo $pr['title'] ?> <span class="glyphicon glyphicon-<?php echo status_icon($pr['status']['state']); ?>"></span>
+                                            <small>
+                                                <?php foreach ($pr['issue']['labels'] as $label): ?>
+                                                <span class="label" style="background-color:#<?php echo $label['color'] ?>"><?php echo $label['name'] ?></span>
+                                                <?php endforeach; ?>
+                                            </small>
+                                        </h4>
                                         <span class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></span>
                                     </div>
                                 </div>
