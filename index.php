@@ -55,12 +55,15 @@ if (is_file('repos.dat')) {
     <body>
         <div class="container-fluid">
             <div class="row">
-                <?php foreach ($pullRequests as $repository => $prs): ?>
+                <?php foreach ($repos as $repository => $pullRequests): ?>
                 <div class="col-md-4">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><?php echo $repository; ?></div>
+                        <div class="panel-heading">
+                            <?php echo $repository; ?>
+                            <span class="badge pull-right"><?php echo (string) count($pullRequests); ?></span>
+                        </div>
                         <div class="list-group">
-                            <?php foreach ($prs as $pr):
+                            <?php foreach ($pullRequests as $pr):
                                 $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
                             ?>
                             <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
@@ -69,7 +72,14 @@ if (is_file('repos.dat')) {
                                         <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
                                     </div>
                                     <div class="media-body">
-                                        <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
+                                        <h4 class="media-heading">
+                                            <?php echo $pr['title'] ?> <span class="glyphicon glyphicon-<?php echo status_icon($pr['status']['state']); ?>"></span>
+                                            <small>
+                                                <?php foreach ($pr['issue']['labels'] as $label): ?>
+                                                <span class="label" style="background-color:#<?php echo $label['color'] ?>"><?php echo $label['name'] ?></span>
+                                                <?php endforeach; ?>
+                                            </small>
+                                        </h4>
                                         <span class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></span>
                                     </div>
                                 </div>
