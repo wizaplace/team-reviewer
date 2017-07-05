@@ -42,7 +42,9 @@ foreach ($config['repositories'] as $repository) {
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php if (isset($_GET['autorefresh'])): ?>
         <meta http-equiv="refresh" content="30">
+        <?php endif; ?>
 
         <title>Pulls Requests</title>
 
@@ -52,37 +54,39 @@ foreach ($config['repositories'] as $repository) {
                 margin: 10px;
             }
 
-            .updated {
+            .panel > .list-group .list-group-item.updated {
                 border-left: 3px solid #0366d6;
             }
         </style>
     </head>
     <body>
-        <div class="row">
-            <?php foreach ($pullRequests as $repository => $prs): ?>
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading"><?php echo $repository; ?></div>
-                    <div class="list-group">
-                        <?php foreach ($prs as $pr):
-                            $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
-                        ?>
-                        <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
-                            <div class="media">
-                                <div class="media-left">
-                                    <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
+        <div class="container-fluid">
+            <div class="row">
+                <?php foreach ($pullRequests as $repository => $prs): ?>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><?php echo $repository; ?></div>
+                        <div class="list-group">
+                            <?php foreach ($prs as $pr):
+                                $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
+                            ?>
+                            <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
+                                        <span class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></span>
+                                    </div>
                                 </div>
-                                <div class="media-body">
-                                    <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
-                                    <span class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></span>
-                                </div>
-                            </div>
-                        </a>
-                        <?php endforeach; ?>
+                            </a>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
         </div>
     </body>
 </html>
