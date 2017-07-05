@@ -42,7 +42,9 @@ foreach ($config['repositories'] as $repository) {
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php if ($_GET['autorefresh']): ?>
         <meta http-equiv="refresh" content="30">
+        <?php endif; ?>
 
         <title>Pulls Requests</title>
 
@@ -52,7 +54,7 @@ foreach ($config['repositories'] as $repository) {
                 margin: 10px;
             }
 
-            .updated {
+            .panel > .list-group .list-group-item.updated {
                 border-left: 3px solid #0366d6;
             }
         </style>
