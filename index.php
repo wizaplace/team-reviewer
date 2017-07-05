@@ -6,34 +6,27 @@
  */
 declare(strict_types = 1);
 
+function status_icon($state) {
+    switch ($state) {
+        case 'failure':
+            return 'remove-sign text-danger';
+        case 'pending':
+            return 'question-sign text-warning';
+        case 'success':
+            return 'ok-sign text-success';
+    }
+}
+
 if (!empty($_GET['id']) && !empty($_GET['redir'])) {
     setcookie('lastClick['.$_GET['id'].']', (string) time(), time() + 2678400);
     header('Location: '.$_GET['redir'], true, 302);
     exit();
 }
 
-$config = include 'config.php';
+$repos = [];
 
-if (isset($config['auth']['token'])) {
-    $authorization = 'token ' . $config['auth']['token'];
-} elseif (isset($auth['basic'])) {
-    $authorization = 'Basic ' . base64_encode($config['auth']['basic']['username'].':'.$config['auth']['basic']['password']);
-}
-
-$context = stream_context_create([
-    'http' => [
-        'header'  => 'Authorization: ' .$authorization. "\r\n" .
-                     'User-Agent: Wizaplace team reviewer'
-    ]
-]);
-
-$pullRequests = [];
-
-foreach ($config['repositories'] as $repository) {
-    $response = file_get_contents('https://api.github.com/repos/'.$repository.'/pulls?state=open&per_page=100', false, $context);
-    $response = json_decode($response, true);
-
-    $pullRequests[$repository] = $response;
+if (is_file('repos.dat')) {
+    $repos = unserialize(file_get_contents('repos.dat'));
 }
 ?>
 <!DOCTYPE html>
