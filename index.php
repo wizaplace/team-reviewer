@@ -14,9 +14,15 @@ if (!empty($_GET['id']) && !empty($_GET['redir'])) {
 
 $config = include 'config.php';
 
+if (isset($config['auth']['token'])) {
+    $authorization = 'token ' . $config['auth']['token'];
+} elseif (isset($auth['basic'])) {
+    $authorization = 'Basic ' . base64_encode($config['auth']['basic']['username'].':'.$config['auth']['basic']['password']);
+}
+
 $context = stream_context_create([
     'http' => [
-        'header'  => 'Authorization: Basic ' . base64_encode($config['auth']['username'].':'.$config['auth']['password']) . "\r\n" .
+        'header'  => 'Authorization: ' .$authorization. "\r\n" .
                      'User-Agent: Wizaplace team reviewer'
     ]
 ]);
@@ -27,7 +33,7 @@ foreach ($config['repositories'] as $repository) {
     $response = file_get_contents('https://api.github.com/repos/'.$repository.'/pulls?state=open&per_page=100', false, $context);
     $response = json_decode($response, true);
 
-    $pullRequests = array_merge($pullRequests, $response);
+    $pullRequests[$repository] = $response;
 }
 ?>
 <!DOCTYPE html>
@@ -52,24 +58,30 @@ foreach ($config['repositories'] as $repository) {
         </style>
     </head>
     <body>
-        <h1>Pull requests</h1>
-        <div class="list-group">
-            <?php foreach ($pullRequests as $pr):
-                $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
-            ?>
-            <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
-                <h4 class="list-group-item-heading">
-                    <img class="img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" width="32" />
-                    <?php echo $pr['title'] ?>
-                    <span class="pull-right">
-                        <strong>
-                            <?php echo $pr['head']['repo']['full_name']; ?>
-                        </strong>
-                        &nbsp;-&nbsp;
-                        <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?>
-                    </span>
-                </h4>
-            </a>
+        <div class="row">
+            <?php foreach ($pullRequests as $repository => $prs): ?>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><?php echo $repository; ?></div>
+                    <div class="list-group">
+                        <?php foreach ($prs as $pr):
+                            $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
+                        ?>
+                        <a href="?id=<?php echo $pr['id']; ?>&redir=<?php echo $pr['html_url']; ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
+                            <div class="media">
+                                <div class="media-left">
+                                    <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading"><?php echo $pr['title'] ?></h4>
+                                    <span class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></span>
+                                </div>
+                            </div>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
             <?php endforeach; ?>
         </div>
     </body>
