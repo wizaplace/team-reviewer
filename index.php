@@ -28,6 +28,17 @@ $repos = [];
 if (is_file('repos.dat')) {
     $repos = unserialize(file_get_contents('repos.dat'));
 }
+
+usort($pullRequests, function($a, $b) {
+    $ta = strtotime($a['created_at']);
+    $tb = strtotime($b['created_at']);
+
+    if ($ta == $tb) {
+        return 0;
+    }
+
+    return $ta < $tb ? -1 : 1;
+});
 ?>
 <!DOCTYPE html>
 <html lang="en">
