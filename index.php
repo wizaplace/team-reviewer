@@ -33,8 +33,8 @@ function font_color($hex) {
  * based on https://www.splitbrain.org/blog/2008-09/18-calculating_color_contrast_with_php#luminosity_contrast
  */
 function luminosity_contrast(array $foreground, array $background) {
-    [$R1, $G1, $B1] = $foreground;
-    [$R2, $G2, $B2] = $background;
+    list($R1, $G1, $B1) = $foreground;
+    list($R2, $G2, $B2) = $background;
 
     $L1 = 0.2126 * pow($R1 / 255, 2.2) +
           0.7152 * pow($G1 / 255, 2.2) +
