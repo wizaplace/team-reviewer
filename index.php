@@ -6,7 +6,7 @@
  */
 declare(strict_types = 1);
 
-function status_icon(string $state): string {
+function status_icon($state) {
     switch ($state) {
         case 'failure':
             return 'remove-sign text-danger';
@@ -32,7 +32,7 @@ function font_color($hex) {
  * Calculate the luminosity contrast between two colors
  * based on https://www.splitbrain.org/blog/2008-09/18-calculating_color_contrast_with_php#luminosity_contrast
  */
-function luminosity_contrast(array $foreground, array $background): float {
+function luminosity_contrast(array $foreground, array $background) {
     [$R1, $G1, $B1] = $foreground;
     [$R2, $G2, $B2] = $background;
 
@@ -54,7 +54,7 @@ function luminosity_contrast(array $foreground, array $background): float {
 /**
  * Transform an hexadecimal color to RGB
  */
-function hex_to_rgb(string $hex): array {
+function hex_to_rgb($hex) {
     $r = hexdec(substr($hex, 0, 2));
     $g = hexdec(substr($hex, 2, 2));
     $b = hexdec(substr($hex, 4, 2));
