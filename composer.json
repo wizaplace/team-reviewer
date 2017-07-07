@@ -1,5 +1,8 @@
 {
     "require": {
-        "silex/silex": "~2.0"
+        "silex/silex": "~2.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "kevinrob/guzzle-cache-middleware": "^2.0",
+        "doctrine/cache": "^1.6"
     }
 }
