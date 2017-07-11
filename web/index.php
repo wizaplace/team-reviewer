@@ -49,30 +49,7 @@ if (isset($config['auth']['token'])) {
 }
 $app['http.client'] = new \GuzzleHttp\Client($guzzleOptions);
 
-$app->get('/', function () use ($app) {
-    if (!empty($_GET['id']) && !empty($_GET['redir'])) {
-
-    }
-
-    $repos = [];
-
-    if (is_file(__DIR__.'/../repos.dat')) {
-        $repos = unserialize(file_get_contents(__DIR__.'/../repos.dat'));
-    }
-
-    return $app['templating']->render('index.php', [
-        'repos' => $repos,
-    ]);
-});
-
-$app->get('/{id}/{redir}', function ($id, $redir) use ($app) {
-    $response = $app->redirect(base64_decode($redir));
-    $response->headers->setCookie(new Cookie('lastClick['.$id.']', (string) time(), time() + 2678400));
-
-    return $response;
-});
-
-$app->get('/update', function () use ($app, $config) {
+$app->get('/', function () use ($app, $config) {
     $repos = [];
 
     foreach ($config['repositories'] as $repository) {
@@ -81,8 +58,6 @@ $app->get('/update', function () use ($app, $config) {
         $response = json_decode($response->getBody()->getContents(), true);
 
         foreach ($response as &$pr) {
-            echo "  #{$pr['number']} {$pr['title']}\n";
-
             $pr['issue'] = json_decode(
                 $app['http.client']->get($pr['issue_url'])->getBody()->getContents(),
                 true
@@ -97,9 +72,16 @@ $app->get('/update', function () use ($app, $config) {
         $repos[$repository] = $response;
     }
 
-    file_put_contents(__DIR__.'/../repos.dat', serialize($repos));
+    return $app['templating']->render('index.php', [
+        'repos' => $repos,
+    ]);
+});
 
-    return 'ok';
+$app->get('/{id}/{redir}', function ($id, $redir) use ($app) {
+    $response = $app->redirect(base64_decode($redir));
+    $response->headers->setCookie(new Cookie('lastClick['.$id.']', (string) time(), time() + 2678400));
+
+    return $response;
 });
 
 $app->run();
