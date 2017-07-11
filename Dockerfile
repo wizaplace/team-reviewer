@@ -17,6 +17,7 @@ COPY composer.lock /var/www/html/
 RUN composer install --no-dev --no-progress --no-interaction --prefer-dist --optimize-autoloader
 
 COPY . /var/www/html
+RUN a2enmod rewrite
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 
 VOLUME ["/var/www/html/config.php", "/var/www/html/repos.dat"]
