@@ -98,7 +98,7 @@ $app->get('/update', function () use ($app, $config) {
                     $pr['reviews']['state'] = $review['state'];
                 }
 
-                if ('APPROVE' == $review['state'] && 'REQUEST_CHANGES' != $pr['reviews']['state']) {
+                if ('APPROVED' == $review['state'] && 'REQUEST_CHANGES' != $pr['reviews']['state']) {
                     $pr['reviews']['state'] = $review['state'];
                 }
 
