@@ -35,7 +35,7 @@
                         <?php foreach ($pullRequests as $pr):
                             $updated = !(!empty($_COOKIE['lastClick'][$pr['id']]) && $_COOKIE['lastClick'][$pr['id']] > strtotime($pr['updated_at']));
                             ?>
-                            <a href="/<?php echo $pr['id']; ?>/<?php echo base64_encode($pr['html_url']); ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?>" target="_blank">
+                            <a href="/<?php echo $pr['id']; ?>/<?php echo base64_encode($pr['html_url']); ?>" class="list-group-item <?php if ($updated): ?>updated<?php endif; ?> <?php if ($pr['reviews']['state'] == 'APPROVED'): ?>list-group-item-success<?php endif; ?>" target="_blank">
                                 <div class="media">
                                     <div class="media-left">
                                         <img class="media-object img-circle" src="<?php echo $pr['user']['avatar_url']; ?>" alt="<?php echo $pr['user']['login']; ?>" width="40">

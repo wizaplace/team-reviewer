@@ -88,6 +88,25 @@ $app->get('/update', function () use ($app, $config) {
                 true
             );
 
+            $pr['reviews'] = [
+                'comments' => json_decode($app['http.client']->get('https://api.github.com/repos/'.$repository.'/pulls/'.$pr['number'].'/reviews')->getBody()->getContents(), true),
+                'state' => null,
+            ];
+
+            foreach ($pr['reviews']['comments'] as $review) {
+                if (null === $pr['reviews']['state']) {
+                    $pr['reviews']['state'] = $review['state'];
+                }
+
+                if ('APPROVED' == $review['state'] && 'REQUEST_CHANGES' != $pr['reviews']['state']) {
+                    $pr['reviews']['state'] = $review['state'];
+                }
+
+                if ('REQUEST_CHANGES' == $review['state']) {
+                    $pr['reviews']['state'] = $review['state'];
+                }
+            }
+
             $pr['status'] = json_decode(
                 $app['http.client']->get('https://api.github.com/repos/'.$repository.'/commits/'.$pr['head']['sha'].'/status')->getBody()->getContents(),
                 true
