@@ -14,10 +14,20 @@
     <style>
         body {
             margin: 10px;
+            font-size: 12px;
+        }
+
+        h4 {
+            font-size: 1.4rem;
         }
 
         .panel > .list-group .list-group-item.updated {
             border-left: 3px solid #0366d6;
+        }
+
+        .col-md-3 {
+            padding-right: 5px;
+            padding-left: 5px;
         }
     </style>
 </head>
@@ -25,7 +35,7 @@
 <div class="container-fluid">
     <div class="row">
         <?php foreach ($repos as $repository => $pullRequests): ?>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <?php echo $repository; ?>
