@@ -35,6 +35,7 @@
 <div class="container-fluid">
     <div class="row">
         <?php foreach ($repos as $repository => $pullRequests): ?>
+            <?php if (count($pullRequests)): ?>
             <div class="col-md-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -67,6 +68,7 @@
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
         <?php endforeach; ?>
     </div>
 </div>
