@@ -9,11 +9,11 @@ declare(strict_types=1);
 function status_icon($state) {
     switch ($state) {
         case 'failure':
-            return 'remove-sign text-danger';
+            return 'fa-times text-danger';
         case 'pending':
-            return 'question-sign text-warning';
+            return 'fa-refresh text-warning';
         case 'success':
-            return 'ok-sign text-success';
+            return 'fa-check text-success';
     }
 }
 

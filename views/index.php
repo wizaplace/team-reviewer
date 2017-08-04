@@ -11,6 +11,7 @@
     <title>Pulls Requests</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <style>
         body {
             margin: 10px;
@@ -53,14 +54,16 @@
                                     </div>
                                     <div class="media-body">
                                         <h4 class="media-heading">
-                                            <?php echo $pr['title'] ?> <span class="glyphicon glyphicon-<?php echo status_icon($pr['status']['state']); ?>"></span>
+                                            <?php echo $pr['title'] ?> <i class="fa <?php echo status_icon($pr['status']['state']); ?>" aria-hidden="true"></i>
                                             <small>
                                                 <?php foreach ($pr['issue']['labels'] as $label): ?>
                                                     <span class="label" style="background-color:#<?php echo $label['color'] ?>; color: <?php echo font_color($label['color']) ?>"><?php echo $label['name'] ?></span>
                                                 <?php endforeach; ?>
                                             </small>
                                         </h4>
-                                        <span class="text-muted">#<?php echo $pr['number'] ?> <span class="glyphicon glyphicon-time"></span> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?></span>
+                                        <span class="text-muted">
+                                            #<?php echo $pr['number'] ?> <i class="fa fa-clock-o" aria-hidden="true"></i> <?php echo date('d/m H:i', strtotime($pr['created_at'])); ?> <i class="fa fa-comment-o" aria-hidden="true"></i> <?php echo isset($pr['comments']) ? count($pr['comments']) : '0' ?>
+                                        </span>
                                     </div>
                                 </div>
                             </a>
