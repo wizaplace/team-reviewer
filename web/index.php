@@ -6,6 +6,7 @@ use Kevinrob\GuzzleCache\CacheMiddleware;
 use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
 use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Request;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
@@ -49,19 +50,29 @@ if (isset($config['auth']['token'])) {
 }
 $app['http.client'] = new \GuzzleHttp\Client($guzzleOptions);
 
-$app->get('/', function () use ($app) {
+$app->get('/', function (Request $request) use ($app) {
     if (!empty($_GET['id']) && !empty($_GET['redir'])) {
 
     }
 
     $repos = [];
+    $labels = [];
 
     if (is_file(__DIR__.'/../repos.dat')) {
         $repos = unserialize(file_get_contents(__DIR__.'/../repos.dat'));
     }
 
+    if (isset($repos['labels'])) {
+        $labels = $repos['labels'];
+        unset($repos['labels']);
+    }
+
     return $app['templating']->render('index.php', [
         'repos' => $repos,
+        'labels' => $labels,
+        'selectedLabels' => $request->query->get('label', []),
+        'selectedStatus' => $request->query->get('status'),
+        'autorefresh' => $request->query->getBoolean('autorefresh'),
     ]);
 });
 
@@ -74,6 +85,7 @@ $app->get('/{id}/{redir}', function ($id, $redir) use ($app) {
 
 $app->get('/update', function () use ($app, $config) {
     $repos = [];
+    $labelNames = [];
 
     foreach ($config['repositories'] as $repository) {
         $response = $app['http.client']->get('https://api.github.com/repos/' . $repository . '/pulls?state=open&per_page=100');
@@ -118,8 +130,17 @@ $app->get('/update', function () use ($app, $config) {
             );
         }
 
+        $labels = json_decode(
+            $app['http.client']->get("https://api.github.com/repos/{$repository}/labels")->getBody()->getContents(),
+            true
+        );
+
         $repos[$repository] = $response;
+        // Fusion de la liste de tous labels des repos
+        $labelNames = array_merge($labelNames, array_column($labels, 'name'));
     }
+
+    $repos['labels'] = array_unique($labelNames);
 
     file_put_contents(__DIR__.'/../repos.dat', serialize($repos));
 
