@@ -100,6 +100,11 @@ $app->get('/update', function () use ($app, $config) {
                 true
             );
 
+            $pr['comments'] = json_decode(
+                $app['http.client']->get($pr['comments_url'].'?per_page=100')->getBody()->getContents(),
+                true
+            );
+
             $pr['reviews'] = [
                 'comments' => json_decode($app['http.client']->get('https://api.github.com/repos/'.$repository.'/pulls/'.$pr['number'].'/reviews')->getBody()->getContents(), true),
                 'state' => null,
