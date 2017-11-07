@@ -13,7 +13,7 @@ stop:
 	docker stop $(CONTAINER_NAME); true
 
 clean:
-	docker wait $(CONTAINER_NAME)
+	docker wait $(CONTAINER_NAME); true
 	docker rm $(CONTAINER_NAME)
 
 update: build stop start
