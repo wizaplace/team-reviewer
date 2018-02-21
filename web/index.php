@@ -87,7 +87,11 @@ $app->get('/update', function () use ($app, $config) {
     $repos = [];
     $labelNames = [];
 
-    foreach ($config['repositories'] as $repository) {
+    $response = $app['http.client']->get('https://api.github.com/orgs/'.$config['organization'].'/repos?per_page=100');
+    $response = json_decode($response->getBody()->getContents(), true);
+
+    foreach ($response as $repositoryData) {
+        $repository = $repositoryData['full_name'];
         $response = $app['http.client']->get('https://api.github.com/repos/' . $repository . '/pulls?state=open&per_page=100');
 
         $response = json_decode($response->getBody()->getContents(), true);

@@ -3,6 +3,7 @@
 return [
     'repositories' => [
     ],
+    'organization' => '',
     'auth' => [
         'basic' => [
             'username' => '',
